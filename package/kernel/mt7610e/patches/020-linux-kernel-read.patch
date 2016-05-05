@@ -1,0 +1,17 @@
+--- a/src/os/linux/rt_linux.c	2016-05-04 17:47:23.708266191 +0300
++++ b/src/os/linux/rt_linux.c	2016-05-04 17:49:18.724260900 +0300
+@@ -877,13 +877,7 @@
+ 
+ int RtmpOSFileRead(RTMP_OS_FD osfd, char *pDataPtr, int readLen)
+ {
+-	/* The object must have a read method */
+-	if (osfd->f_op && osfd->f_op->read) {
+-		return osfd->f_op->read(osfd, pDataPtr, readLen, &osfd->f_pos);
+-	} else {
+-		DBGPRINT(RT_DEBUG_ERROR, ("no file read method\n"));
+-		return -1;
+-	}
++	return kernel_read(osfd, 0, pDataPtr, readLen);
+ }
+ 
+ int RtmpOSFileWrite(RTMP_OS_FD osfd, char *pDataPtr, int writeLen)
