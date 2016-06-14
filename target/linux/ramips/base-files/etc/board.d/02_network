@@ -35,6 +35,7 @@ ramips_setup_interfaces()
 	case $board in
 	3g150b|\
 	3g300m|\
+	a5-v11|\
 	all0256n|\
 	all5002|\
 	all5003|\
@@ -44,13 +45,14 @@ ramips_setup_interfaces()
 	ht-tm02|\
 	linkits7688 | \
 	linkits7688d | \
+	m2m|\
 	microwrt|\
 	ncs601w|\
 	w150m|\
 	wnce2001|\
 	zte-q7)
 		ucidef_add_switch "switch0"
-		ucidef_add_switch_attr "switch0" "reset" "false"
+		ucidef_add_switch_attr "switch0" "enable" "false"
 		ucidef_set_interface_lan "eth0"
 		;;
 	3g-6200nl|\
@@ -91,10 +93,6 @@ ramips_setup_interfaces()
 	youku-yk1)
 		ucidef_add_switch "switch0" \
 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6@eth0"
-		;;
-	a5-v11)
-		ucidef_add_switch "switch0" \
-			"0:lan" "6t@eth0"
 		;;
 	ar670w|\
 	ar725w|\
@@ -181,11 +179,6 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"1:lan" "2:lan" "3:lan" "4:lan" "5:lan" "0:wan" "6@eth0"
 		;;
-	m2m)
-		ucidef_add_switch "switch0"
-		ucidef_add_switch_attr "switch0" "reset" "false"
-		ucidef_set_interface_lan "eth0"
-		;;
 	mlwg2|\
 	wizard8800|\
 	wl-330n|\
@@ -252,6 +245,16 @@ ramips_setup_macs()
 
 	case $board in
 	a5-v11|\
+	ht-tm02)
+		lan_mac=$(cat /sys/class/net/eth0/address)
+		;;
+	all0239-3g|\
+	carambola|\
+	freestation5|\
+	w502u|\
+	wnce2001)
+		wan_mac=$(mtd_get_mac_binary factory 46)
+		;;
 	bc2|\
 	broadway|\
 	d105|\
@@ -271,13 +274,6 @@ ramips_setup_macs()
 		lan_mac=$(macaddr_setbit_la "$lan_mac")
 		wan_mac=$(macaddr_add "$lan_mac" 1)
 		;;
-	all0239-3g|\
-	carambola|\
-	freestation5|\
-	w502u|\
-	wnce2001)
-		wan_mac=$(mtd_get_mac_binary factory 46)
-		;;
 	br-6475nd)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		wan_mac=$(mtd_get_mac_binary devdata 7)
@@ -294,9 +290,6 @@ ramips_setup_macs()
 		lan_mac=`mtd_get_mac_ascii bdinfo "Vfac_mac "`
 		[ -n "$lan_mac" ] || lan_mac=$(cat /sys/class/net/eth0/address)
 		wan_mac=$(macaddr_add "$lan_mac" 1)
-		;;
-	ht-tm02)
-		lan_mac=$(cat /sys/class/net/eth0/address)
 		;;
 	linkits7688 | \
 	linkits7688d)
