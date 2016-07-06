@@ -33,3 +33,7 @@ reads it. If the read fails it fallbacks to some default values.
 
 Original firmware has a `power_check` utility waiting to be reverse
 engineered. It accesses some GPIO pin to read out the battery status.
+
+SD/MMC does not work. Adding status = "okay"; to the corresponding
+section of the device tree and loading a kernel module breaks the
+network driver, possibly due to wrong pinctrl configuration.
